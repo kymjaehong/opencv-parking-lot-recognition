@@ -23,7 +23,6 @@ class MotionDetector:
         VideoCapture(filename)
         비디오 파일 읽기
 
-        메서드
         .set(propid, value)
         동영상 속성 설정
         '''
