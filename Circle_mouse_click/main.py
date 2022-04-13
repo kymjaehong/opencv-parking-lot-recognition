@@ -1,40 +1,54 @@
+import json
+import argparse
 import cv2 as open_cv
+from colors import *
+from coordinates_generator import CoordinatesGenerator
+from motion_detector import MotionDetector
 
-path= r'seulgi.jpeg'
+def main():
+    args= parse_args()
 
-'''
-마우스 클릭 시, 생성되는 좌표를 저장해놓고 그 위치에 원을 생성합니다.
-'''
-refPt= []
-def mouse_click(event, x, y, flags, params):
-    global refPt
-    if event== open_cv.EVENT_LBUTTONDOWN:
-        refPt.append((x, y))
-        radius= 20
-        color= (255, 0, 0)
-        thickness= 2
-        open_cv.circle(img, refPt[0], radius, color, thickness)
-        open_cv.imshow('image', img)
+    image_file= args.image_file
+    data_file= args.data_file
+    start_frame= args.start_frame
+    video_file= args.video_file
 
-img= open_cv.imread(path)
+    if image_file is not None:
+        with open(data_file, 'w+') as points:
+            generator= CoordinatesGenerator(image_file, points, COLOR_RED)
+            generator.generate()
+        
+    with open(data_file, 'r') as data:
+        points= json.load(data)
+        detector= MotionDetector(video_file, points, int(start_frame))
+        detector.detect_motion()
 
-'''
-key r 또는 R을 입력 시에 copy된 clone이 다시 img가 되면서
-while문과 함께 리셋이 되는 효과를 가져옵니다.
-'''
-clone= img.copy()
-open_cv.namedWindow('image')
-open_cv.setMouseCallback('image', mouse_click)
 
-while 1:
-    open_cv.imshow('image', img)
-    key= open_cv.waitKey(1)& 0xFF
+def parse_args():
+    parser= argparse.ArgumentParser(description='Generates Coordinates File')
 
-    if key== ord('r'):
-        img= clone.copy()
+    parser.add_argument("--image",
+                        dest="image_file",
+                        required=False,
+                        help="Image file to generate coordinates on")
 
-    elif key== ord('q'):
-        break
+    parser.add_argument("--video",
+                        dest="video_file",
+                        required=True,
+                        help="Video file to detect motion on")
 
-open_cv.destroyAllWindows()
+    parser.add_argument("--data",
+                        dest="data_file",
+                        required=True,
+                        help="Data file to be used with OpenCV")
 
+    parser.add_argument("--start-frame",
+                        dest="start_frame",
+                        required=False,
+                        default=1,
+                        help="Starting frame on the video")
+
+    return parser.parse_args()
+
+if __name__== '__main__':
+    main()
