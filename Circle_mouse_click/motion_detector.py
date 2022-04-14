@@ -29,6 +29,14 @@ class MotionDetector:
         '''
         coordinates_data= self.coordinates_data
 
+        '''
+        비디오가 열려있는 동안 작업
+
+        JSON 파일에서 읽어 온 points에서 ids(원 번호), 좌표, 반지름을 변수로 받아서 
+        원을 그리고 그 안에 번호를 그려줍니다.
+
+        q 또는 Q를 누르면 while 문이 종료되고 그 후에 영상이 종료됩니다.
+        '''
         while capture.isOpened():
             result, frame= capture.read()
             if frame is None:
