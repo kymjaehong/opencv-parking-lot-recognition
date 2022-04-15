@@ -50,7 +50,7 @@ class MotionDetector:
                 x, y= p['x'], p['y']
                 r= p['r']
 
-                open_cv.circle(new_frame, (x, y), r, COLOR_BLUE, 1)
+                open_cv.circle(new_frame, (x, y), r, COLOR_GREEN, 1)
                 open_cv.putText(new_frame, str(ids), (x, y), open_cv.FONT_HERSHEY_SIMPLEX, 1, COLOR_WHITE, 1)
 
             open_cv.imshow(str(self.video), new_frame)
