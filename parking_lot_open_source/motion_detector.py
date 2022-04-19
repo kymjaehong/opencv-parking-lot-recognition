@@ -159,7 +159,7 @@ class MotionDetector:
 
             '''
             index : 박스의 id
-            c : 좌표 데이터 (json)
+            c : 좌표 데이터 (yml)
             '''
             for index, c in enumerate(coordinates_data):
                 status= self.__apply(grayed, index, c)
