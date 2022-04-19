@@ -2,7 +2,7 @@ import cv2 as open_cv
 import numpy as np
 import json
 from colors import COLOR_WHITE
-from drawing_utils import draw_contours
+#from drawing_utils import draw_contours
 
 class CoordinatesGenerator:
     KEY_RESET= ord('r')
@@ -73,7 +73,8 @@ class CoordinatesGenerator:
         '''
         coordinates= np.array([[self.coordinates[0][0], self.coordinates[0][1]]])
         #print(coordinates)
-        draw_contours(self.image, coordinates, str(self.ids+ 1), COLOR_WHITE)
+        #draw_contours(self.image, coordinates, str(self.ids+ 1), COLOR_WHITE)
+        open_cv.putText(self.image, str(new_points["id"] + 1), coordinates[0], open_cv.FONT_HERSHEY_SIMPLEX, 0.5, COLOR_WHITE, 1, open_cv.LINE_AA)
 
         '''
         클릭했던 좌표 정보 삭제

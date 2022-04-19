@@ -1,6 +1,6 @@
 import cv2 as open_cv
 import numpy as np
-from drawing_utils import draw_contours
+#from drawing_utils import draw_contours
 from colors import COLOR_GREEN, COLOR_WHITE, COLOR_BLUE
 
 class CaptureReadError(Exception):
