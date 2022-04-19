@@ -48,6 +48,9 @@ class MotionDetector:
         logging.debug("coordinates data: %s", coordinates_data)
         #print(logging.debug("coordinates data: %s", coordinates_data)) 에러 발생을 하지 않으면 None
 
+        '''
+        박스의 개수만큼 for loop 진행
+        '''
         for p in coordinates_data:
             coordinates= self._coordinates(p)
             logging.debug("coordinates: %s", coordinates)
@@ -70,15 +73,31 @@ class MotionDetector:
             '''
             [[new_coordinates의 x 좌표- rect의 min_x, new_coordinates의 y 좌표- rect의 min_y]
             ...좌표 4개니까 4개 반환]
+            즉, 좌표계를 원점으로 옮기는 작업을 수행
+
+            -> mask 작업
+
+            라플라시안을 통해 차가 들어왔는지 나갔는지 판별하기 위해 
+            박스 친 부분만을 새로운 좌표계로 분리
             '''
             #print(new_coordinates)
             logging.debug("new_coordinates: %s", new_coordinates)
 
+            '''
+            id 별 원본 좌표와 rect 저장
+            '''
             self.contours.append(coordinates)
             self.bounds.append(rect)
             #print(self.contours)    # coordinates_data 저장
             #print(self.bounds)  # rect 저장
 
+            '''
+            [원본 이미지]
+            np.zeros -> (h X w) 의 2차원 0 배열 생성
+
+            궁금증 -> 왜 (w X h)가 아니라 (h X w)를 사용했을까?
+            grayed[y:(y+h), x:(x+w)]와 shape를 맞춰줘야 하기 때문에
+            '''
             mask= open_cv.drawContours(
                 np.zeros((rect[3], rect[2]), dtype=np.uint8),
                 [new_coordinates],
@@ -92,6 +111,9 @@ class MotionDetector:
             #print(self.mask)    # drawContour로 생성된 array에서 값이 255면 True 아니면 False 반환
             logging.debug("mask: %s", self.mask)
 
+        '''
+        박스의 수 == 변수의 길이
+        '''
         statuses= [False] * len(coordinates_data)
         times= [None] * len(coordinates_data)
 
@@ -116,6 +138,7 @@ class MotionDetector:
             sigma가 1, 2, 3 커질수록 사진은 흐릿해집니다.
             '''
             blurred= open_cv.GaussianBlur(frame.copy(), (5, 5), 3)
+
             '''
             cvtColor(src, code)
             색상 변환
@@ -134,6 +157,10 @@ class MotionDetector:
             position_in_seconds= capture.get(open_cv.CAP_PROP_POS_MSEC)/ 1000.0 # 프레임 재생 시간을 ms로 반환
             #print(position_in_seconds)
 
+            '''
+            index : 박스의 id
+            c : 좌표 데이터 (json)
+            '''
             for index, c in enumerate(coordinates_data):
                 status= self.__apply(grayed, index, c)
                 #print(times[index])
@@ -199,6 +226,10 @@ class MotionDetector:
         capture.release()
         open_cv.destroyAllWindows()
 
+    '''
+    coordinates는 ndarray의 4개의 좌표
+    rect는 id 별 해당 min_x, min_y, w, h 정보
+    '''
     def __apply(self, grayed, index, p):
         coordinates= self._coordinates(p)
         #print(coordinates)
@@ -210,20 +241,31 @@ class MotionDetector:
 
         '''
         grayed[y:(y+height), x:(x+width)]
+
+        Laplacian
+        이미지의 가장자리 검출
+        가장자리란, 전경과 배경이 구분되는 지점으로 전경과 배경 사이에서 밝기가 가장 큰 폭으로 변하는 지점입니다.
         '''
         roi_gray= grayed[rect[1]:(rect[1] + rect[3]), rect[0]:(rect[0] + rect[2])]
         laplacian= open_cv.Laplacian(roi_gray, open_cv.CV_64F)
         logging.debug("laplacian: %s", laplacian)
 
-        coordinates[:, 0]= coordinates[:, 0] - rect[0]
-        coordinates[:, 1]= coordinates[:, 1] - rect[1]
+        # 필요없는 코드라 지웠습니다.
+        # coordinates[:, 0]= coordinates[:, 0] - rect[0]
+        # coordinates[:, 1]= coordinates[:, 1] - rect[1]
 
         '''
+        Number X Boolean-> 합의 평균->
         LAPLACIAN 기준으로 T/F 반환 -> status
 
         차가 들어오면 False로 반환
         '''
         status= np.mean(np.abs(laplacian * self.mask[index]))< MotionDetector.LAPLACIAN
+        # print(laplacian)
+        # print()
+        # print(self.mask[index])
+        #print(np.mean(np.abs(laplacian * self.mask[index])))
+        #print(status)-> 차가 있으면 False 반환
         #plt.imshow(np.abs(laplacian * self.mask[index]))
         #plt.show()
         logging.debug("status: %s", status)
