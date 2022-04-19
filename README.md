@@ -1,5 +1,5 @@
 # 주차장 내 주차 공간 인식
-![](Parking_lot_circle/result_video.gif)
+![](Parking_lot_circle/result_video2.gif)
 
 ## 사용 방법
 ```
