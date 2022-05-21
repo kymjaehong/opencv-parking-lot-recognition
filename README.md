@@ -15,9 +15,9 @@ python3 main.py --image images/parking_lot_1.png --data data/coordinates.json --
 ## 기본 예제
 - 블로그를 통해서 기본 예제를 공부했습니다.<br>
 
-[OpenCV 이미지 읽기](https://github.com/kymjaehong/parking_lot/tree/main/Image_imread_show)<br>
-[OpenCV 마우스 이벤트 & 이미지 Cropping](https://github.com/kymjaehong/parking_lot/tree/main/Capturing_mouse_click)<br>
-[OpenCV JSON & 마우스 이벤트 & 원 그리기](https://github.com/kymjaehong/Parking-lot/tree/main/Circle_mouse_click)<br>
+[OpenCV 이미지 읽기](https://github.com/kymjaehong/parking_lot/tree/main/Step-1)<br>
+[OpenCV 마우스 이벤트 & 이미지 Cropping](https://github.com/kymjaehong/parking_lot/tree/main/Step-2)<br>
+[OpenCV JSON & 마우스 이벤트 & 원 그리기](https://github.com/kymjaehong/Parking-lot/tree/main/Step-3)<br>
 
 - 오픈 소스를 통해서 영상에서 주차 공간을 확인하는 예제를 공부했습니다. 
 
